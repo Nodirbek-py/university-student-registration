@@ -23,7 +23,7 @@ const Login: React.FC = () => {
       if (res?.error) {
         setError(res?.error?.message);
       } else {
-        history.go(0);
+        history.push("/");
       }
     });
   };

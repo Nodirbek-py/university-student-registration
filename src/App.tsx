@@ -50,7 +50,7 @@ function App() {
         history.push("/login");
       }
     });
-  }, []);
+  }, [signedIn]);
   return (
     <Switch>
       <Route exact path="/">
