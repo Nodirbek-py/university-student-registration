@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   Container,
@@ -11,11 +11,17 @@ import {
 } from "@nextui-org/react";
 
 import Popup from "./modal";
+import Navbar from "./navbar";
 interface IParams {
   type: string;
 }
 
-const Students: React.FC = () => {
+interface IProps {
+  user: any;
+  children?: React.ReactNode;
+}
+
+const Students: React.FC<IProps> = (props) => {
   const params: IParams = useParams();
   const [open, setOpen] = useState(false);
 
@@ -61,7 +67,12 @@ const Students: React.FC = () => {
 
   return (
     <Container>
-      <Spacer y={1} />
+      <Navbar
+        displayName={props.user?.displayName}
+        role={props.user?.defaultRole}
+        avatarUrl={props.user?.avatarUrl}
+      />
+      <Spacer y={8} />
       <Row>
         <div>
           <Text h3>Choose Year</Text>
