@@ -14,7 +14,7 @@ const Navbar = (props: IUserData) => {
   const history = useHistory();
   const handleLogout = () => {
     logOut().then(() => {
-      history.go("/");
+      history.go(0);
     });
   };
 
