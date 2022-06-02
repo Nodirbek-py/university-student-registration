@@ -1,5 +1,5 @@
 import { Spacer, Text } from "@nextui-org/react";
-import { Link, Route, Switch, useHistory } from "react-router-dom";
+import { Link, Redirect, Route, Switch, useHistory } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import Login from "./pages/Login";
@@ -54,15 +54,7 @@ function App() {
   return (
     <Switch>
       <Route exact path="/">
-        <Text h1>Here are same sample pages</Text>
-        <Spacer y={1} />
-        {pages.map((page, index) => {
-          return (
-            <div key={index}>
-              <Link to={page.path}>{page.name}</Link>
-            </div>
-          );
-        })}
+        <Redirect to="Login" />
       </Route>
       <Route exact path="/login" component={Login} />
       <Route
