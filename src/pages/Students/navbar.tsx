@@ -35,12 +35,13 @@ const Navbar = (props: IUserData) => {
       <Row
         css={{
           alignItems: "center",
+          height: "100%"
         }}
       >
         <Avatar squared src={props.avatarUrl} />
         <Spacer x={1} />
         <div>
-          <Text color="white" h1>
+          <Text color="white" h3>
             Hello {props.displayName}
           </Text>
           <Text color="success" h6>
