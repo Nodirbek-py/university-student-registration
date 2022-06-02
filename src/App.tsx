@@ -53,9 +53,7 @@ function App() {
   }, [signedIn]);
   return (
     <Switch>
-      <Route exact path="/">
-        <Redirect to="Login" />
-      </Route>
+      <Route exact path="/"></Route>
       <Route exact path="/login" component={Login} />
       <Route
         exact
