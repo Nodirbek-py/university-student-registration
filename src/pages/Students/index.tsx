@@ -12,6 +12,7 @@ import {
 
 import Popup from "./modal";
 import Navbar from "./navbar";
+import { getStudents } from "../../core/nhost";
 interface IParams {
   type: string;
 }
@@ -23,7 +24,43 @@ interface IProps {
 
 const Students: React.FC<IProps> = (props) => {
   const params: IParams = useParams();
+  const [year, setYear] = useState(0);
+  const [branch, setBranch] = useState("");
+  const [registration, setRegistration] = useState(false);
+  const [payment, setPayment] = useState(false);
   const [open, setOpen] = useState(false);
+  const [students, setStudents] = useState([]);
+  const [filteredStudents, setFilteredStudent] = useState([]);
+  const [studentIndex, setStudentIndex] = useState(0);
+  useEffect(() => {
+    getStudents().then((res) => {
+      setStudents(res.students);
+      setFilteredStudent(res.students);
+    });
+  }, [params.type]);
+
+  const applyFilter = () => {
+    let copyStudents = [...students];
+    copyStudents = copyStudents.filter((student) => student.year === year);
+    copyStudents = copyStudents.filter((student) => student.branch === branch);
+    copyStudents = copyStudents.filter(
+      (student) => student.registration === registration,
+    );
+    copyStudents = copyStudents.filter(
+      (student) => student.payment === payment,
+    );
+    setFilteredStudent(copyStudents);
+  };
+
+  const resetFilter = () => {
+    setFilteredStudent(students);
+  };
+
+  const changeStudent = (index: number, status: boolean) => {
+    let studentsCopy = [...students];
+    studentsCopy[index].registration = status;
+    setFilteredStudent(studentsCopy);
+  };
 
   const headers = [
     "Full name",
@@ -33,36 +70,6 @@ const Students: React.FC<IProps> = (props) => {
     "Payment Status",
     "Registration Status",
     "Register",
-  ];
-
-  const students = [
-    {
-      name: "Nodirbek Vositov",
-      id: "01921102N002",
-      branch: "B.Tech",
-      year: 3,
-      payment: true,
-      registration: true,
-      register: "",
-    },
-    {
-      name: "Akbarshox Ravshanbekov",
-      id: "01921102N003",
-      branch: "B.Tech",
-      year: 2,
-      payment: false,
-      registration: false,
-      register: "",
-    },
-    {
-      name: "Polonchi Pistonchiyev",
-      id: "01921102N202",
-      branch: "B.Tech",
-      year: 1,
-      payment: true,
-      registration: false,
-      register: "",
-    },
   ];
 
   return (
@@ -76,7 +83,7 @@ const Students: React.FC<IProps> = (props) => {
       <Row>
         <div>
           <Text h3>Choose Year</Text>
-          <Radio.Group size="xs" value="A">
+          <Radio.Group size="xs" onChange={(e) => setYear(Number(e))}>
             <Radio value="1">1st year</Radio>
             <Radio value="2">2nd year</Radio>
             <Radio value="3">3rd year</Radio>
@@ -88,16 +95,19 @@ const Students: React.FC<IProps> = (props) => {
         <Spacer x={2} />
         <div>
           <Text h3>Choose Branch</Text>
-          <Radio.Group size="xs" value="btech">
-            <Radio value="btech">B.Tech</Radio>
-            <Radio value="bba">B.BA</Radio>
-            <Radio value="bae">B.AE</Radio>
+          <Radio.Group size="xs" onChange={(e) => setBranch(e)}>
+            <Radio value="B.Tech">B.Tech</Radio>
+            <Radio value="B.BA">B.BA</Radio>
+            <Radio value="B.AE">B.AE</Radio>
           </Radio.Group>
         </div>
         <Spacer x={2} />
         <div>
           <Text h3>Choose Registration status</Text>
-          <Radio.Group size="xs" value="false">
+          <Radio.Group
+            size="xs"
+            onChange={(e) => setRegistration(e === "true" ? true : false)}
+          >
             <Radio value="false">Not Registered</Radio>
             <Radio value="true">Registered</Radio>
           </Radio.Group>
@@ -105,18 +115,27 @@ const Students: React.FC<IProps> = (props) => {
         <Spacer x={2} />
         <div>
           <Text h3>Choose Payment status</Text>
-          <Radio.Group size="xs" value="false">
+          <Radio.Group
+            size="xs"
+            onChange={(e) => setPayment(e === "true" ? true : false)}
+          >
             <Radio value="false">Not Paid</Radio>
             <Radio value="true">Paid</Radio>
           </Radio.Group>
         </div>
         <Spacer x={2} />
         <div>
-          <Button size="sm" shadow rounded>
+          <Button size="sm" shadow rounded onClick={applyFilter}>
             Apply filter
           </Button>
           <Spacer y={2.5} />
-          <Button size="sm" color="secondary" shadow rounded>
+          <Button
+            size="sm"
+            color="secondary"
+            shadow
+            rounded
+            onClick={resetFilter}
+          >
             Reset filter
           </Button>
         </div>
@@ -136,11 +155,11 @@ const Students: React.FC<IProps> = (props) => {
           })}
         </Table.Header>
         <Table.Body>
-          {students.map((student, index) => {
+          {filteredStudents.map((student, index) => {
             return (
               <Table.Row key={index}>
-                <Table.Cell>{student.name}</Table.Cell>
-                <Table.Cell>{student.id}</Table.Cell>
+                <Table.Cell>{student.full_name}</Table.Cell>
+                <Table.Cell>{student.uid}</Table.Cell>
                 <Table.Cell>{student.branch}</Table.Cell>
                 <Table.Cell>{student.year}</Table.Cell>
                 <Table.Cell>
@@ -168,7 +187,10 @@ const Students: React.FC<IProps> = (props) => {
                     <Button
                       rounded
                       size="xs"
-                      onClick={() => setOpen(true)}
+                      onClick={() => {
+                        setOpen(true);
+                        setStudentIndex(index);
+                      }}
                       color={student.registration ? "error" : "success"}
                     >
                       {student.registration ? "Edit" : "Register"}
@@ -177,7 +199,10 @@ const Students: React.FC<IProps> = (props) => {
                     <Button
                       rounded
                       size="xs"
-                      onClick={() => setOpen(true)}
+                      onClick={() => {
+                        setOpen(true);
+                        setStudentIndex(index);
+                      }}
                       color={student.payment ? "error" : "success"}
                     >
                       Edit Payment status
@@ -189,7 +214,13 @@ const Students: React.FC<IProps> = (props) => {
           })}
         </Table.Body>
       </Table>
-      <Popup open={open} handler={setOpen} type={params.type} />
+      <Popup
+        open={open}
+        handler={setOpen}
+        type={params.type}
+        index={studentIndex}
+        changeStudent={changeStudent}
+      />
     </Container>
   );
 };

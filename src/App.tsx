@@ -4,14 +4,7 @@ import { useState, useEffect } from "react";
 
 import Login from "./pages/Login";
 import Students from "./pages/Students";
-import {
-  checkSign,
-  client,
-  getAccessToken,
-  getStudents,
-  getTypeOfUser,
-  signIn,
-} from "./core/nhost";
+import { checkSign, getTypeOfUser } from "./core/nhost";
 
 function App() {
   const [signedIn, setSignedIn] = useState(false);

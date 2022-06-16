@@ -1,13 +1,22 @@
-import React from "react";
-import { Modal, Input, Row, Checkbox, Button, Text } from "@nextui-org/react";
+import React, { useState } from "react";
+import { Modal, Button, Text, Radio } from "@nextui-org/react";
 
 interface IPopup {
   open: boolean;
   handler: (boolean: boolean) => void;
   type: string;
+  index: number;
+  changeStudent: (index: number, status: boolean) => void;
 }
 
-const Popup: React.FC<IPopup> = ({ open, handler, type }) => {
+const Popup: React.FC<IPopup> = ({
+  open,
+  handler,
+  type,
+  index,
+  changeStudent,
+}) => {
+  const [registration, setRegistration] = useState(false);
   return (
     <Modal
       closeButton
@@ -27,16 +36,21 @@ const Popup: React.FC<IPopup> = ({ open, handler, type }) => {
         </Text>
       </Modal.Header>
       <Modal.Body>
-        <Text b size={12}>
-          This popup is not ready yet :)
-        </Text>
+        <Text h3>Update the Registration Status</Text>
+        <Radio.Group
+          size="xs"
+          onChange={(e) => setRegistration(e === "true" ? true : false)}
+        >
+          <Radio value="false">Not Registered</Radio>
+          <Radio value="true">Registered</Radio>
+        </Radio.Group>
       </Modal.Body>
       <Modal.Footer>
         <Button auto flat color="error" onClick={() => handler(false)}>
           Close
         </Button>
-        <Button auto onClick={() => handler(false)}>
-          Sign in
+        <Button auto onClick={() => changeStudent(index, registration)}>
+          Edit
         </Button>
       </Modal.Footer>
     </Modal>
